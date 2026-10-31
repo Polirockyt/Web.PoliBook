@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PoliBook</title>
+  <title>Polibook</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
@@ -100,7 +100,6 @@
     <div class="main-content">
       <div class="form-container">
         <h3>Adicionar Livro</h3>
-        <br>
         <form id="bookForm">
           <div class="form-group">
             <label>Título *</label>
@@ -128,4 +127,162 @@
               <option value="1">1 ★☆☆☆☆</option>
             </select>
           </div>
-          <div class="form
+          <div class="form-group">
+            <label>URL da Capa (Opcional)</label>
+            <input type="url" id="cover" placeholder="https://exemplo.com/capa.jpg">
+          </div>
+          <div class="form-group">
+            <label>Anotações / Resenha</label>
+            <textarea id="notes" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Livro</button>
+        </form>
+      </div>
+
+      <div>
+        <div class="tabs">
+          <button class="tab-btn active" id="tabRead">Lidos</button>
+          <button class="tab-btn" id="tabWant">Quero Ler</button>
+          <button class="tab-btn" id="tabBought">Meus Livros</button>
+        </div>
+
+        <div class="controls">
+          <input type="text" id="searchInput" placeholder="Buscar por título ou autor...">
+        </div>
+
+        <div class="book-grid" id="bookGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let books = JSON.parse(localStorage.getItem('my_books')) || [];
+    let currentTab = 'read';
+
+    const bookForm = document.getElementById('bookForm');
+    const statusSelect = document.getElementById('status');
+    const ratingGroup = document.getElementById('ratingGroup');
+    const bookGrid = document.getElementById('bookGrid');
+    const themeToggle = document.getElementById('themeToggle');
+    const searchInput = document.getElementById('searchInput');
+
+    statusSelect.addEventListener('change', () => {
+      ratingGroup.style.display = statusSelect.value === 'read' ? 'block' : 'none';
+    });
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      themeToggle.innerHTML = isDark ? '<i class="fas fa-moon"></i> Modo Escuro' : '<i class="fas fa-sun"></i> Modo Claro';
+    });
+
+    bookForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newBook = {
+        id: Date.now(),
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        status: document.getElementById('status').value,
+        rating: statusSelect.value === 'read' ? Number(document.getElementById('rating').value) : 0,
+        cover: document.getElementById('cover').value || 'https://via.placeholder.com/200x300?text=Sem+Capa',
+        notes: document.getElementById('notes').value
+      };
+      books.push(newBook);
+      saveAndRender();
+      bookForm.reset();
+      ratingGroup.style.display = 'block';
+    });
+
+    document.getElementById('tabRead').addEventListener('click', (e) => {
+      setActiveTab('read', e.target);
+    });
+    document.getElementById('tabWant').addEventListener('click', (e) => {
+      setActiveTab('want', e.target);
+    });
+    document.getElementById('tabBought').addEventListener('click', (e) => {
+      setActiveTab('bought', e.target);
+    });
+
+    function setActiveTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderBooks();
+    }
+
+    searchInput.addEventListener('input', renderBooks);
+
+    function deleteBook(id) {
+      books = books.filter(b => b.id !== id);
+      saveAndRender();
+    }
+
+    function moveStatus(id) {
+      const book = books.find(b => b.id === id);
+      if (book) {
+        if (book.status === 'want') {
+          book.status = 'bought';
+          book.rating = 0;
+        } else if (book.status === 'bought') {
+          const rate = prompt('Qual nota de 1 a 5 você dá para este livro?', '5');
+          if (rate !== null) {
+            book.status = 'read';
+            book.rating = Number(rate) || 5;
+          }
+        } else {
+          book.status = 'want';
+          book.rating = 0;
+        }
+        saveAndRender();
+      }
+    }
+
+    function saveAndRender() {
+      localStorage.setItem('my_books', JSON.stringify(books));
+      renderBooks();
+      updateStats();
+    }
+
+    function updateStats() {
+      const readList = books.filter(b => b.status === 'read');
+      const wantList = books.filter(b => b.status === 'want');
+      const boughtList = books.filter(b => b.status === 'bought');
+      
+      document.getElementById('totalRead').innerText = readList.length;
+      document.getElementById('totalWant').innerText = wantList.length;
+      document.getElementById('totalBought').innerText = boughtList.length;
+      
+      const avg = readList.length 
+        ? (readList.reduce((acc, b) => acc + b.rating, 0) / readList.length).toFixed(1) 
+        : '0.0';
+      document.getElementById('avgRating').innerText = avg;
+    }
+
+    function renderBooks() {
+      const query = searchInput.value.toLowerCase();
+      const filtered = books.filter(b => 
+        b.status === currentTab && 
+        (b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query))
+      );
+
+      bookGrid.innerHTML = filtered.map(b => `
+        <div class="book-card">
+          <img src="${b.cover}" class="book-cover" alt="Capa" onerror="this.src='https://via.placeholder.com/200x300?text=Sem+Capa'">
+          <div class="book-info">
+            <div class="book-title">${b.title}</div>
+            <div class="book-author">por ${b.author}</div>
+            ${b.status === 'read' ? `<div class="stars">${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}</div>` : ''}
+            <div class="book-notes">${b.notes || ''}</div>
+            <div class="card-actions">
+              <button class="btn-action" onclick="moveStatus(${b.id})" title="Mover status"><i class="fas fa-exchange-alt"></i></button>
+              <button class="btn-action" onclick="deleteBook(${b.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    saveAndRender();
+  </script>
+</body>
+</html>
