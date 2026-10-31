@@ -7,25 +7,25 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #f5f5f7;       /* Fundo geral em cinza suave */
-      --bg-secondary: #ffffff;     /* Fundo dos cartões e caixas em branco */
-      --text-color: #111111;       /* Texto em preto puro */
-      --accent-color: #000000;     /* Destaques e botões em preto */
-      --accent-hover: #333333;     /* Hover escuro */
-      --border-color: #cccccc;     /* Bordas cinza bem visíveis */
-      --input-bg: #eeeeee;          /* Fundo dos campos de entrada */
+      --bg-primary: #f2f2f2;       /* Fundo cinza claro e limpo */
+      --bg-secondary: #ffffff;     /* Fundo branco puro para os blocos */
+      --text-color: #1a1a1a;       /* Texto em preto forte */
+      --accent-color: #000000;     /* Preto absoluto para botões e títulos principais */
+      --accent-hover: #333333;     /* Cinza escuro para hover */
+      --border-color: #b5b5b5;     /* Bordas marcantes e nítidas */
+      --input-bg: #fafafa;         /* Fundo suave para inputs */
       --card-bg: #ffffff;          /* Fundo dos cartões de livros */
-      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     [data-theme="dark"] {
-      --bg-primary: #121212;       /* Fundo geral escuro */
-      --bg-secondary: #1e1e1e;     /* Fundo das caixas em cinza escuro */
+      --bg-primary: #121212;       /* Fundo preto profundo */
+      --bg-secondary: #1e1e1e;     /* Fundo cinza escuro para blocos */
       --text-color: #f0f0f0;       /* Texto em branco suave */
-      --accent-color: #ffffff;     /* Destaques em branco */
-      --accent-hover: #d1d1d1;     /* Hover claro */
-      --border-color: #444444;     /* Bordas para o modo escuro */
-      --input-bg: #2a2a2a;         /* Fundo dos inputs no modo escuro */
+      --accent-color: #ffffff;     /* Branco puro para destaques */
+      --accent-hover: #cccccc;     /* Cinza claro para hover */
+      --border-color: #444444;     /* Bordas discretas para o modo escuro */
+      --input-bg: #2a2a2a;         /* Fundo dos inputs escuros */
       --card-bg: #1e1e1e;          /* Fundo dos cartões escuros */
       --shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
@@ -65,7 +65,7 @@
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-color); }
     
     button.btn-submit { width: 100%; background: var(--accent-color); color: var(--bg-secondary); border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; margin-top: 5px; }
-    button.btn-submit:hover { opacity: 0.9; }
+    button.btn-submit:hover { opacity: 0.9; background: var(--accent-hover); }
 
     .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .tab-btn { padding: 10px 18px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-color); border-radius: 8px; cursor: pointer; font-weight: bold; }
@@ -75,11 +75,11 @@
     .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
     
     .book-card { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); }
-    .book-cover { height: 220px; object-fit: cover; width: 100%; background: #ddd; }
+    .book-cover { height: 220px; object-fit: cover; width: 100%; background: #ccc; }
     .book-info { padding: 15px; flex: 1; display: flex; flex-direction: column; }
     .book-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
     .book-author { font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px; }
-    .stars { color: #f39c12; margin-bottom: 10px; }
+    .stars { color: #555; margin-bottom: 10px; }
     .book-notes { font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; flex: 1; font-style: italic; }
     
     .card-actions { display: flex; gap: 8px; justify-content: flex-end; border-top: 2px solid var(--border-color); padding-top: 10px; margin-top: auto; }
@@ -90,7 +90,7 @@
 <body>
   <div class="container">
     <header>
-      <h1><i class="fas fa-book-open"></i> Minha Estante</h1>
+      <h1><i class="fas fa-book-open"></i> PoliBook</h1>
       <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> Modo Escuro</button>
     </header>
 
