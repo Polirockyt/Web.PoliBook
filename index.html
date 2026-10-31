@@ -7,71 +7,71 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      :root {
-      /* Modo Claro em tons de preto, cinza e branco */
-      --bg-primary: #f0f0f0;      /* Um cinza bem clarinho para o fundo da página */
-      --bg-secondary: #ffffff;    /* Branco puro para os cartões e caixas */
-      --text-color: #111111;      /* Preto quase puro para os textos principais */
-      --accent-color: #333333;    /* Um cinza bem escuro para os títulos e botões principais */
-      --accent-hover: #555555;    /* Um cinza médio para quando passar o mouse */
-      --border-color: #cccccc;    /* Cinza claro para as bordas e linhas */
-      --card-bg: #ffffff;         /* Branco para o fundo interno dos cartões */
-      --shadow: 0 4px 15px rgba(0,0,0,0.08);
+    <style>
+    :root {
+      --bg-primary: #e8e8e8;      /* Cinza claro elegante para o fundo geral */
+      --bg-secondary: #ffffff;    /* Branco puro para o formulário e painéis */
+      --text-color: #1a1a1a;      /* Preto suave para ótima leitura */
+      --accent-color: #262626;    /* Preto carvão para títulos e botões principais */
+      --accent-hover: #404040;    /* Cinza escuro para o hover dos botões */
+      --border-color: #d1d1d1;    /* Cinza nítido para separar as bordas */
+      --card-bg: #ffffff;         /* Branco para os cartões dos livros */
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     [data-theme="dark"] {
-      /* Modo Escuro em tons de preto e branco diferentes */
-      --bg-primary: #0a0a0a;      /* Preto profundo para o fundo da página */
-      --bg-secondary: #161616;    /* Um preto um pouco mais claro para as caixas */
-      --text-color: #e5e5e5;      /* Branco suave/gelo para os textos (não agride os olhos) */
-      --accent-color: #ffffff;    /* Branco puro para destacar os títulos e botões */
-      --accent-hover: #cccccc;    /* Cinza claro para o hover dos botões */
-      --border-color: #262626;    /* Cinza escuro discreto para as bordas */
-      --card-bg: #1f1f1f;         /* Cinza bem escuro para os cartões */
-      --shadow: 0 4px 15px rgba(255,255,255,0.03);
+      --bg-primary: #121212;      /* Preto profundo para o fundo geral */
+      --bg-secondary: #1e1e1e;    /* Cinza bem escuro para painéis e formulário */
+      --text-color: #f0f0f0;      /* Branco gelo para o texto não ofuscar */
+      --accent-color: #ffffff;    /* Branco puro para destaques */
+      --accent-hover: #d1d1d1;    /* Cinza claro para hover */
+      --border-color: #333333;    /* Cinza escuro para bordas discretas */
+      --card-bg: #1a1a1a;         /* Preto acinzentado para os cartões */
+      --shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s, color 0.3s; }
     body { background-color: var(--bg-primary); color: var(--text-color); min-height: 100vh; padding: 20px; }
     .container { max-width: 1000px; margin: 0 auto; }
     
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
-    h1 { font-family: Georgia, serif; color: var(--accent-color); }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; background: var(--bg-secondary); padding: 15px 20px; border-radius: 8px; box-shadow: var(--shadow); }
+    h1 { font-family: Georgia, serif; color: var(--accent-color); font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
     
-    .theme-toggle { background: none; border: 2px solid var(--border-color); color: var(--text-color); padding: 8px 15px; border-radius: 20px; cursor: pointer; }
+    .theme-toggle { background: var(--bg-primary); border: 2px solid var(--border-color); color: var(--text-color); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600; }
+    .theme-toggle:hover { background: var(--border-color); }
     
     .stats-panel { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
     .stat-card { background: var(--bg-secondary); padding: 15px; border-radius: 8px; flex: 1; min-width: 150px; text-align: center; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
     .stat-number { font-size: 1.5rem; font-weight: bold; color: var(--accent-color); }
 
-    .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 25px; }
+    .main-content { display: grid; grid-template-columns: 320px 1fr; gap: 25px; align-items: start; }
     @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
 
-    .form-container { background: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); height: fit-content; box-shadow: var(--shadow); }
+    .form-container { background: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
-    input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); color: var(--text-color); }
-    button.btn-submit { width: 100%; background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-color); }
+    button.btn-submit { width: 100%; background: var(--accent-color); color: var(--bg-secondary); border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; }
     button.btn-submit:hover { background: var(--accent-hover); }
 
     .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-    .tab-btn { padding: 10px 20px; border: none; background: var(--bg-secondary); color: var(--text-color); border-radius: 6px; cursor: pointer; border: 1px solid var(--border-color); }
-    .tab-btn.active { background: var(--accent-color); color: white; }
+    .tab-btn { padding: 10px 20px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-color); border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .tab-btn.active { background: var(--accent-color); color: var(--bg-secondary); border-color: var(--accent-color); }
 
     .controls { display: flex; gap: 10px; margin-bottom: 20px; }
     .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
     
     .book-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); }
-    .book-cover { height: 220px; object-fit: cover; width: 100%; background: #e0e0e0; }
+    .book-cover { height: 220px; object-fit: cover; width: 100%; background: #ccc; }
     .book-info { padding: 15px; flex: 1; display: flex; flex-direction: column; }
     .book-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
     .book-author { font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px; }
     .stars { color: #f39c12; margin-bottom: 10px; }
     .book-notes { font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; flex: 1; font-style: italic; }
     
-    .card-actions { display: flex; gap: 5px; justify-content: flex-end; }
-    .btn-action { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 5px; opacity: 0.7; }
-    .btn-action:hover { opacity: 1; }
+    .card-actions { display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: auto; }
+    .btn-action { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 6px 10px; border-radius: 4px; background: var(--bg-primary); opacity: 0.8; }
+    .btn-action:hover { opacity: 1; background: var(--border-color); }
   </style>
 </head>
 <body>
