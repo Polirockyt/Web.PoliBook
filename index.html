@@ -3,29 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Polibook</title>
+  <title>Minha Estante Virtual</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #f4efe6;
-      --bg-secondary: #ffffff;
-      --text-color: #2c221e;
-      --accent-color: #8b5a2b;
-      --accent-hover: #6d441f;
-      --border-color: #e2d7c5;
-      --card-bg: #fffcf7;
-      --shadow: 0 4px 15px rgba(0,0,0,0.05);
+      :root {
+      /* Modo Claro em tons de preto, cinza e branco */
+      --bg-primary: #f0f0f0;      /* Um cinza bem clarinho para o fundo da página */
+      --bg-secondary: #ffffff;    /* Branco puro para os cartões e caixas */
+      --text-color: #111111;      /* Preto quase puro para os textos principais */
+      --accent-color: #333333;    /* Um cinza bem escuro para os títulos e botões principais */
+      --accent-hover: #555555;    /* Um cinza médio para quando passar o mouse */
+      --border-color: #cccccc;    /* Cinza claro para as bordas e linhas */
+      --card-bg: #ffffff;         /* Branco para o fundo interno dos cartões */
+      --shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
 
     [data-theme="dark"] {
-      --bg-primary: #1a1614;
-      --bg-secondary: #241e1b;
-      --text-color: #ece3db;
-      --accent-color: #d4a373;
-      --accent-hover: #faedcd;
-      --border-color: #3d332e;
-      --card-bg: #2d2522;
-      --shadow: 0 4px 15px rgba(0,0,0,0.3);
+      /* Modo Escuro em tons de preto e branco diferentes */
+      --bg-primary: #0a0a0a;      /* Preto profundo para o fundo da página */
+      --bg-secondary: #161616;    /* Um preto um pouco mais claro para as caixas */
+      --text-color: #e5e5e5;      /* Branco suave/gelo para os textos (não agride os olhos) */
+      --accent-color: #ffffff;    /* Branco puro para destacar os títulos e botões */
+      --accent-hover: #cccccc;    /* Cinza claro para o hover dos botões */
+      --border-color: #262626;    /* Cinza escuro discreto para as bordas */
+      --card-bg: #1f1f1f;         /* Cinza bem escuro para os cartões */
+      --shadow: 0 4px 15px rgba(255,255,255,0.03);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s, color 0.3s; }
@@ -51,7 +54,7 @@
     button.btn-submit { width: 100%; background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     button.btn-submit:hover { background: var(--accent-hover); }
 
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .tab-btn { padding: 10px 20px; border: none; background: var(--bg-secondary); color: var(--text-color); border-radius: 6px; cursor: pointer; border: 1px solid var(--border-color); }
     .tab-btn.active { background: var(--accent-color); color: white; }
 
@@ -88,6 +91,10 @@
         <div>Quero Ler</div>
       </div>
       <div class="stat-card">
+        <div class="stat-number" id="totalBought">0</div>
+        <div>Meus Livros</div>
+      </div>
+      <div class="stat-card">
         <div class="stat-number" id="avgRating">0.0</div>
         <div>Média de Notas</div>
       </div>
@@ -111,7 +118,7 @@
             <select id="status">
               <option value="read">Já Li</option>
               <option value="want">Quero Ler</option>
-              <option value="bought">Meus Livros</option>
+              <option value="bought">Meus Livros (Comprados)</option>
             </select>
           </div>
           <div class="form-group" id="ratingGroup">
@@ -140,6 +147,7 @@
         <div class="tabs">
           <button class="tab-btn active" id="tabRead">Lidos</button>
           <button class="tab-btn" id="tabWant">Quero Ler</button>
+          <button class="tab-btn" id="tabBought">Meus Livros</button>
         </div>
 
         <div class="controls">
@@ -186,6 +194,7 @@
       books.push(newBook);
       saveAndRender();
       bookForm.reset();
+      ratingGroup.style.display = 'block'; // reseta o select
     });
 
     document.getElementById('tabRead').addEventListener('click', (e) => {
@@ -193,6 +202,9 @@
     });
     document.getElementById('tabWant').addEventListener('click', (e) => {
       setActiveTab('want', e.target);
+    });
+    document.getElementById('tabBought').addEventListener('click', (e) => {
+      setActiveTab('bought', e.target);
     });
 
     function setActiveTab(tab, btn) {
@@ -213,6 +225,9 @@
       const book = books.find(b => b.id === id);
       if (book) {
         if (book.status === 'want') {
+          book.status = 'bought';
+          book.rating = 0;
+        } else if (book.status === 'bought') {
           const rate = prompt('Qual nota de 1 a 5 você dá para este livro?', '5');
           if (rate !== null) {
             book.status = 'read';
@@ -235,8 +250,11 @@
     function updateStats() {
       const readList = books.filter(b => b.status === 'read');
       const wantList = books.filter(b => b.status === 'want');
+      const boughtList = books.filter(b => b.status === 'bought');
+      
       document.getElementById('totalRead').innerText = readList.length;
       document.getElementById('totalWant').innerText = wantList.length;
+      document.getElementById('totalBought').innerText = boughtList.length;
       
       const avg = readList.length 
         ? (readList.reduce((acc, b) => acc + b.rating, 0) / readList.length).toFixed(1) 
@@ -260,7 +278,7 @@
             ${b.status === 'read' ? `<div class="stars">${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}</div>` : ''}
             <div class="book-notes">${b.notes || ''}</div>
             <div class="card-actions">
-              <button class="btn-action" onclick="moveStatus(${b.id})" title="Mover lista"><i class="fas fa-exchange-alt"></i></button>
+              <button class="btn-action" onclick="moveStatus(${b.id})" title="Mover status"><i class="fas fa-exchange-alt"></i></button>
               <button class="btn-action" onclick="deleteBook(${b.id})" title="Excluir"><i class="fas fa-trash"></i></button>
             </div>
           </div>
