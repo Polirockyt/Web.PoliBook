@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polibook</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #f4efe6;
+      --bg-secondary: #ffffff;
+      --text-color: #2c221e;
+      --accent-color: #8b5a2b;
+      --accent-hover: #6d441f;
+      --border-color: #e2d7c5;
+      --card-bg: #fffcf7;
+      --shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1614;
+      --bg-secondary: #241e1b;
+      --text-color: #ece3db;
+      --accent-color: #d4a373;
+      --accent-hover: #faedcd;
+      --border-color: #3d332e;
+      --card-bg: #2d2522;
+      --shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s, color 0.3s; }
+    body { background-color: var(--bg-primary); color: var(--text-color); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
+    h1 { font-family: Georgia, serif; color: var(--accent-color); }
+    
+    .theme-toggle { background: none; border: 2px solid var(--border-color); color: var(--text-color); padding: 8px 15px; border-radius: 20px; cursor: pointer; }
+    
+    .stats-panel { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+    .stat-card { background: var(--bg-secondary); padding: 15px; border-radius: 8px; flex: 1; min-width: 150px; text-align: center; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+    .stat-number { font-size: 1.5rem; font-weight: bold; color: var(--accent-color); }
+
+    .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 25px; }
+    @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
+
+    .form-container { background: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); height: fit-content; box-shadow: var(--shadow); }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+    input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); color: var(--text-color); }
+    button.btn-submit { width: 100%; background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button.btn-submit:hover { background: var(--accent-hover); }
+
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-btn { padding: 10px 20px; border: none; background: var(--bg-secondary); color: var(--text-color); border-radius: 6px; cursor: pointer; border: 1px solid var(--border-color); }
+    .tab-btn.active { background: var(--accent-color); color: white; }
+
+    .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+    .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    
+    .book-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); }
+    .book-cover { height: 220px; object-fit: cover; width: 100%; background: #e0e0e0; }
+    .book-info { padding: 15px; flex: 1; display: flex; flex-direction: column; }
+    .book-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
+    .book-author { font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px; }
+    .stars { color: #f39c12; margin-bottom: 10px; }
+    .book-notes { font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; flex: 1; font-style: italic; }
+    
+    .card-actions { display: flex; gap: 5px; justify-content: flex-end; }
+    .btn-action { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 5px; opacity: 0.7; }
+    .btn-action:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-book-open"></i> Minha Estante</h1>
+      <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> Modo Escuro</button>
+    </header>
+
+    <div class="stats-panel">
+      <div class="stat-card">
+        <div class="stat-number" id="totalRead">0</div>
+        <div>Livros Lidos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalWant">0</div>
+        <div>Quero Ler</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="avgRating">0.0</div>
+        <div>Média de Notas</div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="form-container">
+        <h3>Adicionar Livro</h3>
+        <br>
+        <form id="bookForm">
+          <div class="form-group">
+            <label>Título *</label>
+            <input type="text" id="title" required>
+          </div>
+          <div class="form-group">
+            <label>Autor *</label>
+            <input type="text" id="author" required>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="status">
+              <option value="read">Já Li</option>
+              <option value="want">Quero Ler</option>
+            </select>
+          </div>
+          <div class="form-group" id="ratingGroup">
+            <label>Nota (1 a 5)</label>
+            <select id="rating">
+              <option value="5">5 ★★★★★</option>
+              <option value="4">4 ★★★★☆</option>
+              <option value="3">3 ★★★☆☆</option>
+              <option value="2">2 ★★☆☆☆</option>
+              <option value="1">1 ★☆☆☆☆</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>URL da Capa (Opcional)</label>
+            <input type="url" id="cover" placeholder="https://exemplo.com/capa.jpg">
+          </div>
+          <div class="form-group">
+            <label>Anotações / Resenha</label>
+            <textarea id="notes" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Livro</button>
+        </form>
+      </div>
+
+      <div>
+        <div class="tabs">
+          <button class="tab-btn active" id="tabRead">Lidos</button>
+          <button class="tab-btn" id="tabWant">Quero Ler</button>
+        </div>
+
+        <div class="controls">
+          <input type="text" id="searchInput" placeholder="Buscar por título ou autor...">
+        </div>
+
+        <div class="book-grid" id="bookGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let books = JSON.parse(localStorage.getItem('my_books')) || [];
+    let currentTab = 'read';
+
+    const bookForm = document.getElementById('bookForm');
+    const statusSelect = document.getElementById('status');
+    const ratingGroup = document.getElementById('ratingGroup');
+    const bookGrid = document.getElementById('bookGrid');
+    const themeToggle = document.getElementById('themeToggle');
+    const searchInput = document.getElementById('searchInput');
+
+    statusSelect.addEventListener('change', () => {
+      ratingGroup.style.display = statusSelect.value === 'read' ? 'block' : 'none';
+    });
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      themeToggle.innerHTML = isDark ? '<i class="fas fa-moon"></i> Modo Escuro' : '<i class="fas fa-sun"></i> Modo Claro';
+    });
+
+    bookForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newBook = {
+        id: Date.now(),
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        status: document.getElementById('status').value,
+        rating: statusSelect.value === 'read' ? Number(document.getElementById('rating').value) : 0,
+        cover: document.getElementById('cover').value || 'https://via.placeholder.com/200x300?text=Sem+Capa',
+        notes: document.getElementById('notes').value
+      };
+      books.push(newBook);
+      saveAndRender();
+      bookForm.reset();
+    });
+
+    document.getElementById('tabRead').addEventListener('click', (e) => {
+      setActiveTab('read', e.target);
+    });
+    document.getElementById('tabWant').addEventListener('click', (e) => {
+      setActiveTab('want', e.target);
+    });
+
+    function setActiveTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderBooks();
+    }
+
+    searchInput.addEventListener('input', renderBooks);
+
+    function deleteBook(id) {
+      books = books.filter(b => b.id !== id);
+      saveAndRender();
+    }
+
+    function moveStatus(id) {
+      const book = books.find(b => b.id === id);
+      if (book) {
+        if (book.status === 'want') {
+          const rate = prompt('Qual nota de 1 a 5 você dá para este livro?', '5');
+          if (rate !== null) {
+            book.status = 'read';
+            book.rating = Number(rate) || 5;
+          }
+        } else {
+          book.status = 'want';
+          book.rating = 0;
+        }
+        saveAndRender();
+      }
+    }
+
+    function saveAndRender() {
+      localStorage.setItem('my_books', JSON.stringify(books));
+      renderBooks();
+      updateStats();
+    }
+
+    function updateStats() {
+      const readList = books.filter(b => b.status === 'read');
+      const wantList = books.filter(b => b.status === 'want');
+      document.getElementById('totalRead').innerText = readList.length;
+      document.getElementById('totalWant').innerText = wantList.length;
+      
+      const avg = readList.length 
+        ? (readList.reduce((acc, b) => acc + b.rating, 0) / readList.length).toFixed(1) 
+        : '0.0';
+      document.getElementById('avgRating').innerText = avg;
+    }
+
+    function renderBooks() {
+      const query = searchInput.value.toLowerCase();
+      const filtered = books.filter(b => 
+        b.status === currentTab && 
+        (b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query))
+      );
+
+      bookGrid.innerHTML = filtered.map(b => `
+        <div class="book-card">
+          <img src="${b.cover}" class="book-cover" alt="Capa" onerror="this.src='https://via.placeholder.com/200x300?text=Sem+Capa'">
+          <div class="book-info">
+            <div class="book-title">${b.title}</div>
+            <div class="book-author">por ${b.author}</div>
+            ${b.status === 'read' ? `<div class="stars">${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}</div>` : ''}
+            <div class="book-notes">${b.notes || ''}</div>
+            <div class="card-actions">
+              <button class="btn-action" onclick="moveStatus(${b.id})" title="Mover lista"><i class="fas fa-exchange-alt"></i></button>
+              <button class="btn-action" onclick="deleteBook(${b.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    saveAndRender();
+  </script>
+</body>
+</html>
